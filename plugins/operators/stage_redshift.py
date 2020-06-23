@@ -32,14 +32,13 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_link=s3_link
         self.redshift_id=redshift_id
         self.credentials=credentials
-#This part of function returns error indicator: execute() got an unexpected keyword argument 'context'
-#Is the 'context' parameter mandatory?
-#What if I just want to use s3 link as indicator?
-    def execute(self, s3_link):
+
+    def execute(self, context):
         aws_hook=AwsHook(self.credentials)
         credentials=aws_hook.get_credentials()
-        redshift=PostgresHook(postgres_conn_id=redshift_id)
-        self.log.info("Clearing.")
+        redshift=PostgresHook(postgres_conn_id=self.redshift_id)
+        s3_link=context
+        self.log.info("Clearing & Restoring.")
         redshift.run("DELETE FROM {table_name}").format(self.table_name)
         
         self.log.info("Importing.")
@@ -48,8 +47,10 @@ class StageToRedshiftOperator(BaseOperator):
                                         table_name=self.table_name,
                                         s3_link=self.s3_link)
             redshift.run(sql)
+            self.log.info('Events data import complete.')
         elif s3_link == 's3://udacity-dend/song_data':
             sql=StageToRedshiftOperator.import_s3_song.format(
                                         table_name=self.table_name,
                                         s3_link=self.s3_link)
             redshift.run(sql)
+            self.log.info('Songs data import complete.')
