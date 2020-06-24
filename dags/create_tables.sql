@@ -1,12 +1,4 @@
-DROP TABLE IF EXISTS artists;
-DROP TABLE IF EXISTS songplays;
-DROP TABLE IF EXISTS songs;
-DROP TABLE IF EXISTS staging_events;
-DROP TABLE IF EXISTS staging_songs;
-DROP TABLE IF EXISTS users;
-
-
-CREATE TABLE IF NOT EXISTS public.artists (
+CREATE TABLE IF NOT EXISTS artists (
 	artistid varchar(256) NOT NULL,
 	name varchar(256),
 	location varchar(256),
@@ -14,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.artists (
 	longitude numeric(18,0)
 );
 
-CREATE TABLE IF NOT EXISTS public.songplays (
+CREATE TABLE IF NOT EXISTS songplays (
 	playid varchar(32) NOT NULL,
 	start_time timestamp NOT NULL,
 	userid int4 NOT NULL,
@@ -27,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.songplays (
 	CONSTRAINT songplays_pkey PRIMARY KEY (playid)
 );
 
-CREATE TABLE IF NOT EXISTS public.songs (
+CREATE TABLE IF NOT EXISTS songs (
 	songid varchar(256) NOT NULL,
 	title varchar(256),
 	artistid varchar(256),
@@ -36,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.songs (
 	CONSTRAINT songs_pkey PRIMARY KEY (songid)
 );
 
-CREATE TABLE IF NOT EXISTS public.staging_events (
+CREATE TABLE IF NOT EXISTS staging_events (
 	artist varchar(256),
 	auth varchar(256),
 	firstname varchar(256),
@@ -57,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.staging_events (
 	userid int4
 );
 
-CREATE TABLE IF NOT EXISTS public.staging_songs (
+CREATE TABLE IF NOT EXISTS staging_songs (
 	num_songs int4,
 	artist_id varchar(256),
 	artist_name varchar(256),
@@ -70,7 +62,7 @@ CREATE TABLE IF NOT EXISTS public.staging_songs (
 	"year" int4
 );
 
-CREATE TABLE IF NOT EXISTS public.staging_songs (
+CREATE TABLE IF NOT EXISTS staging_songs (
 	num_songs int4,
 	artist_id varchar(256),
 	artist_name varchar(256),
@@ -83,7 +75,7 @@ CREATE TABLE IF NOT EXISTS public.staging_songs (
 	"year" int4
 );
 
-CREATE TABLE IF NOT EXISTS public.users (
+CREATE TABLE IF NOT EXISTS users (
 	userid int4 NOT NULL,
 	first_name varchar(256),
 	last_name varchar(256),
