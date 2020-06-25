@@ -39,7 +39,7 @@ class StageToRedshiftOperator(BaseOperator):
         redshift=PostgresHook(postgres_conn_id=self.redshift_id)
         s3_link=context
         self.log.info("Clearing & Restoring.")
-        redshift.run("DELETE FROM {table_name}").format(self.table_name)
+        redshift.run("DELETE FROM {}".format(self.table_name))
         
         self.log.info("Importing.")
         if s3_link == 's3://udacity-dend/log_data':
