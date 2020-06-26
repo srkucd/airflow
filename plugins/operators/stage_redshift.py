@@ -40,15 +40,18 @@ class StageToRedshiftOperator(BaseOperator):
         s3_link=context
         self.log.info("Clearing & Restoring.")
         redshift.run("DELETE FROM {}".format(self.table_name))
-        
+
+        #The commented condition is used for final version.
         self.log.info("Importing.")
-        if s3_link == 's3://udacity-dend/log_data':
+#         if s3_link == 's3://udacity-dend/log_data':
+        if s3_link == 's3://udacity-dend/log_data/2020/05':
             sql=StageToRedshiftOperator.import_s3_event.format(
                                         table_name=self.table_name,
                                         s3_link=self.s3_link)
             redshift.run(sql)
             self.log.info('Events data import complete.')
-        elif s3_link == 's3://udacity-dend/song_data':
+#         elif s3_link == 's3://udacity-dend/song_data':
+        elif s3_link == 's3://udacity-dend/song_data/A/A/A':
             sql=StageToRedshiftOperator.import_s3_song.format(
                                         table_name=self.table_name,
                                         s3_link=self.s3_link)
