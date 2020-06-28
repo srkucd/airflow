@@ -60,5 +60,5 @@ class StageToRedshiftOperator(BaseOperator):
                                         key_id=credentials.access_key, 
                                         secret_id=credentials.secret_key)
             redshift.run(formatted_sql)
-            self.log.info("Importing log data complete")
+            self.log.info("Importing song data complete")
         
