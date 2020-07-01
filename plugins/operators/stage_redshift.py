@@ -61,4 +61,5 @@ class StageToRedshiftOperator(BaseOperator):
                                         secret_id=credentials.secret_key)
             redshift.run(formatted_sql)
             self.log.info("Importing song data complete")
-        
+        else:
+            self.log.info('Unknown s3 link - {}'.format(s3_link))

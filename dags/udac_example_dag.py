@@ -10,7 +10,6 @@ from helpers import SqlQueries
 # AWS_KEY = os.environ.get('AWS_KEY')
 # AWS_SECRET = os.environ.get('AWS_SECRET')
 
-#For prototype, we do not need retry function.
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2019, 1, 12),
@@ -33,8 +32,6 @@ dag = DAG('udac_example_dag',
 #######################################################################
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
-
-#I already cleaned my Redshift schema, why do I still cannot create new table(no bugs)
 create_tables=PostgresOperator(
     task_id='create_tables',
     dag=dag,
