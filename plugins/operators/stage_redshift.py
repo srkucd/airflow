@@ -10,13 +10,13 @@ class StageToRedshiftOperator(BaseOperator):
                  ACCESS_KEY_ID '{key_id}'
                  SECRET_ACCESS_KEY '{secret_id}'
                  REGION 'us-west-2'
-                 TIMEFORMAT 'epochmilisecs'
-                 FORMAT AS JSON 'auto'"""
+                 TIMEFORMAT AS 'epochmillisecs'
+                 FORMAT AS JSON 'auto' """
     
     import_s3_event="""COPY {table_name} FROM '{s3_link}'
                        ACCESS_KEY_ID '{key_id}'
                        SECRET_ACCESS_KEY '{secret_id}'
-                       TIMEFORMAT as 'epochmillisecs'
+                       TIMEFORMAT AS 'epochmillisecs'
                        TRUNCATECOLUMNS BLANKSASNULL EMPTYASNULL
                        REGION 'us-west-2'
                        FORMAT AS JSON 's3://udacity-dend/log_json_path.json'"""
@@ -24,14 +24,16 @@ class StageToRedshiftOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  table_name='',
-                 s3_link='',
+                 s3_bucket='',
+                 s3_key='',
                  redshift_id='',
                  credentials='',
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         self.table_name=table_name
-        self.s3_link=s3_link
+        self.s3_bucket=s3_bucket
+        self.s3_key=s3_key
         self.redshift_id=redshift_id
         self.credentials=credentials
 
@@ -39,24 +41,28 @@ class StageToRedshiftOperator(BaseOperator):
         aws_hook=AwsHook(self.credentials)
         credentials=aws_hook.get_credentials()
         redshift=PostgresHook(postgres_conn_id=self.redshift_id)
-        s3_link=context
+        
         self.log.info("Clearing & Restoring.")
         redshift.run("DELETE FROM {}".format(self.table_name))
+        
+        rendered_key=self.s3_key.format(**context)
+        s3_path='s3://{}/{}'.format(self.s3_bucket, rendered_key)
+
 
         #The commented condition is used for final version.
         self.log.info("Importing.")
-        if 's3://udacity-dend/log_data' in s3_link:
+        if self.table_name == 'staging_events':
             formatted_sql=StageToRedshiftOperator.import_s3_event.format(
                                         table_name=self.table_name,
-                                        s3_link=self.s3_link,
+                                        s3_link=s3_path,
                                         key_id=credentials.access_key, 
                                         secret_id=credentials.secret_key)
             redshift.run(formatted_sql)
             self.log.info("Importing log data complete")
-        elif 's3://udacity-dend/song_data' in s3_link:
+        elif self.table_name == 'staging_songs':
             formatted_sql=StageToRedshiftOperator.import_s3_song.format(
                                         table_name=self.table_name,
-                                        s3_link=self.s3_link,
+                                        s3_link=s3_path,
                                         key_id=credentials.access_key, 
                                         secret_id=credentials.secret_key)
             redshift.run(formatted_sql)
