@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
@@ -12,7 +13,9 @@ from helpers import SqlQueries
 
 default_args = {
     'owner': 'udacity',
-    'start_date': datetime(2019, 1, 12),
+#Here, we should set start_date to a constant date.
+    'start_date': datetime(2020, 7, 3),
+    'end_date': datetime(2020, 7, 4),
     'depends_on_past':False,
     'retries': 3,
     'retry_delay':timedelta(minutes=5),
