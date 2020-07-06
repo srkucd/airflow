@@ -33,6 +33,7 @@ dag = DAG('udac_example_dag',
 # For the next time always remember set connection in UI first!!!!!!! #
 #                                                                     #
 #######################################################################
+
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 
 create_tables=PostgresOperator(
@@ -64,16 +65,16 @@ stage_songs_to_redshift = StageToRedshiftOperator(
 
 load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
-    dag=dag
+    dag=dag,
+    redshift_id='redshift',
+    credentials='aws_credentials',
+    sql=SqlQueries.songplay_table_insert,
+    mode='insert'
 )
 
 load_user_dimension_table = LoadDimensionOperator(
     task_id='Load_user_dim_table',
     dag=dag,
-    table_name='stage_events',
-    s3_link='s3://udacity-dend/log_data/*/*',
-    redshift_id='redshift',
-    credentials='credentials'
 )
 
 load_song_dimension_table = LoadDimensionOperator(
@@ -98,11 +99,11 @@ run_quality_checks = DataQualityOperator(
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
-start_operator >> create_tables
-create_tables >> stage_events_to_redshift
-create_tables >> stage_songs_to_redshift
-stage_events_to_redshift >> load_songplays_table
-stage_songs_to_redshift >> load_songplays_table
+# start_operator >> create_tables
+# create_tables >> stage_events_to_redshift
+# create_tables >> stage_songs_to_redshift
+# stage_events_to_redshift >> load_songplays_table
+# stage_songs_to_redshift >> load_songplays_table
 load_songplays_table >> load_song_dimension_table
 load_songplays_table >> load_user_dimension_table
 load_songplays_table >> load_artist_dimension_table
