@@ -48,8 +48,6 @@ class StageToRedshiftOperator(BaseOperator):
         rendered_key=self.s3_key.format(**context)
         s3_path='s3://{}/{}'.format(self.s3_bucket, rendered_key)
 
-
-        #The commented condition is used for final version.
         self.log.info("Importing.")
         if self.table_name == 'staging_events':
             formatted_sql=StageToRedshiftOperator.import_s3_event.format(

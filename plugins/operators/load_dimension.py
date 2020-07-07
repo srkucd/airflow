@@ -9,7 +9,6 @@ class LoadDimensionOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  redshift_id='',
-#                  credentials='',
                  sql='',
                  mode='',
                  table_name='',
@@ -17,15 +16,12 @@ class LoadDimensionOperator(BaseOperator):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.redshift_id=redshift_id
-#         self.credentials=credentials
         self.sql=sql
         self.mode=mode
         self.table_name=table_name
         
     def execute(self, context):
         self.log.info("Setting.")
-#         aws_hook=AwsHook(self.credentials)
-#         credentials=aws_hook.get_credentials()
         redshift=PostgresHook(postgres_conn_id=self.redshift_id)
         
         self.log.info('Importing.')

@@ -10,21 +10,17 @@ class LoadFactOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  redshift_id='',
-#                  credentials='',
                  sql='',
                  mode='',
                  *args, **kwargs):
 
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         self.redshift_id=redshift_id
-#         self.crecentials=credentials
         self.sql=sql
         self.mode=mode
 
     def execute(self, context):
         self.log.info('Setting.')
-#         aws_hook=AwsHook(self.credentials)
-#         credentials=aws_hook.get_credentials()
         redshift=PostgresHook(postgres_conn_id=self.redshift_id)
         
         self.log.info('Loading dimension table.')
